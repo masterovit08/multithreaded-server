@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Server{
-	static final int PORT = 3443;
+	static final int PORT = 8081;
 
 	private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
 	private ArrayList<LocalTime> times = new ArrayList<LocalTime>();

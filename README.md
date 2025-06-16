@@ -1,11 +1,45 @@
-# Socket project (multithreaded server version)
+# Multithreaded messaging server
 
-## About the creation
-This is the best and most correctly working version of my Java multiplayer console chat project. This version is a copy of the previous version with an interface, rewritten for the console.
+## ABOUT
+This is a <ins>console version</ins> of a simple chat that allows you to exchange messages with other clients connected to the server.
 
-***
+## How to start it?
 
-## About the running program
-The client needs to connect to the server and enter a nickname that will be displayed in the system in order to start chatting. Communication takes place as in a regular chat, with notifications about the accession of a new client and the departure of an existing user.
+Since Java requires the presence of the main class Main, for ease of launch there is the possibility to initialize the server or client classes using command line arguments.
+> [!WARNING]
+> **PLEASE NOTE** that you need to generate a .class file before running. To do this, simply run in the terminal `make`
 
-**Wrote and created by masterovit08**
+<details>
+  <summary><b>Starting the server</b></summary>
+
+  ```
+  make
+  java Main server
+  ```
+
+</details>
+
+<details>
+  <summary><b>Starting the client</b></summary>
+
+  ```
+  make
+  java Main client
+  ```
+</details>
+
+> [!NOTE]
+> There is also an interactive class selection in the absence of command line parameters.
+> ```
+> $ make && java Main
+> 
+> Select startup mode
+> 1 - Server
+> 2 - Client
+> Number:
+> ```
+
+# Want to contribute?
+It's not hard. Just fork and then send a pull request. The project is really young and weak and therefore needs your help :)
+
+All the basic rules for participating in the development of the project are written in [CONTRIBUTING](CONTRIBUTING.md).
