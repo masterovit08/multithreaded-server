@@ -39,7 +39,7 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 > Number:
 > ```
 
-# Want to contribute?
+## Want to contribute?
 It's not hard. Just fork and then send a pull request. The project is really young and weak and therefore needs your help :)
 
 All the basic rules for participating in the development of the project are written in [CONTRIBUTING](CONTRIBUTING.md).
