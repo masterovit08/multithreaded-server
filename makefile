@@ -1,4 +1,4 @@
 all:
-	javac Main.java
+	javac -sourcepath src src/Main.java
 clean:
-	rm *.class
+	rm src/*.class
