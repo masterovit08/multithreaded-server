@@ -14,7 +14,7 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 
   ```
   make
-  java -classpath src Main server
+  java src.Main server
   ```
 
 </details>
@@ -24,14 +24,14 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 
   ```
   make
-  java -classpath src Main client
+  java src.Main client
   ```
 </details>
 
 > [!NOTE]
 > There is also an interactive class selection in the absence of command line parameters.
 > ```
-> $ make && java -classpath src Main
+> $ make && java src.Main
 > 
 > Select startup mode
 > 1 - Server
