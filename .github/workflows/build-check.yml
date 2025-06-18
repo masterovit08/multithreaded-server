@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install JDK
         run: sudo apt update && sudo apt install -y default-jdk make
