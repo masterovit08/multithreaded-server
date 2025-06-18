@@ -26,12 +26,12 @@ public class Main {
 
     private static void interactiveMode() {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.println("Select startup mode");
         System.out.println("1 - Server");
         System.out.println("2 - Client");
         System.out.print("Number:");
-        
+
         try {
             int choice = scanner.nextInt();
             switch (choice) {
@@ -48,8 +48,6 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Input error. Please enter a number");
             System.exit(1);
-        } finally {
-            scanner.close();
         }
     }
 }

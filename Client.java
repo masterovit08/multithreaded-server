@@ -10,7 +10,7 @@ public class Client{
 	private PrintWriter out;
 	private Scanner in;
 	private Scanner input;
-	private String name = "";
+	private String name;
 	private Boolean flag;
 
 	public String getName(){
@@ -45,13 +45,13 @@ public class Client{
 						if (in.hasNext()){
 							String message_from_server = in.nextLine();
 
-							if (message_from_server.toString().trim().equals("New member joined to server")){
+							if (message_from_server.trim().equals("New member joined to server")){
 								System.out.println();
 								System.out.println("==========================");
 								System.out.println(message_from_server);
 								System.out.println();
 							}
-							else if (message_from_server.toString().trim().equals("<clients_number>")){
+							else if (message_from_server.trim().equals("<clients_number>")){
 								flag = true;
 							}
 
