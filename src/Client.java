@@ -39,6 +39,7 @@ public class Client{
 		name = input.nextLine();
 		System.out.println();
 
+
 		new Thread(new Runnable() {
 			@Override
 			public void run(){
@@ -58,10 +59,10 @@ public class Client{
 							}
 
 							else if (flag = true){
+								System.out.println();
 								System.out.println(message_from_server);
 								System.out.println();
-								System.out.println("==========================");
-								System.out.println();
+								System.out.print(name + ": ");
 								flag = false;
 							}
 
