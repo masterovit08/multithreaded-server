@@ -14,14 +14,14 @@ public class Client{
 	private Scanner input;
 	private String name;
 	private boolean flag = false;
-	private boolean running =  true;
+	private boolean running = true;
 
 	public String getName(){
 		return this.name;
 	}
 
-	public Client(){
-		try{
+	public Client() {
+		try {
 			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
 			out = new PrintWriter(clientSocket.getOutputStream());
 			in = new Scanner(clientSocket.getInputStream());
@@ -29,9 +29,8 @@ public class Client{
 
 			System.out.println("Connected");
 			System.out.println("All streams are established");
-		}
 
-		catch (IOException ex){
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			closeStreams();
 		}
@@ -40,119 +39,70 @@ public class Client{
 		name = input.nextLine();
 		System.out.println();
 
-		new Thread(new Runnable() {
-			@Override
-			public void run(){
-				try{
-					while (true){
-						if (in.hasNext()){
-							String message_from_server = in.nextLine();
-
-							if (message_from_server.trim().equals("New member joined to server")){
-								System.out.println();
-								System.out.println("==========================");
-								System.out.println(message_from_server);
-								System.out.println();
-							}
-							else if (message_from_server.trim().equals("<clients_number>")){
-								flag = true;
-							}
-
-							else if (flag = true){
-								System.out.println();
-								System.out.println(message_from_server);
-								System.out.println();
-								System.out.print(name + ": ");
-								flag = false;
-							}
-
-							else{
-								System.out.println(message_from_server);
-							}
-						}
-					}
-				}
-
-				catch (Exception ex){
-					ex.printStackTrace();
-				}
-			}
-		}).start();
-
-		new Thread(new Runnable(){
-			@Override
-			public void run(){
-				try{
-					while (true){
-						String message = input.nextLine();
-
-						if (message.equalsIgnoreCase("exit")){
-							try{
-								if (!name.isEmpty()){
-									out.println(name + " left the server");
-								}
-								else{
-									out.println("<unknown user> left the server");
-								}
-
-								out.println("exit");
-								out.flush();
-								out.close();
-								in.close();
-								clientSocket.close();
-
-								System.out.println("All streams closed");
-								break;
-							}
-
-							catch (IOException ex){
-								ex.printStackTrace();
-							}
-						}
-
-						out.println(name + ": " + message);
-						out.flush();
-					}
-				}
-
-				catch (Exception ex){
-					ex.printStackTrace();
-				}
-			}
-		}).start();
+		new Thread(new MessageReader()).start();
+		new Thread(new MessageWriter()).start();
 	}
 
-	private class MessageReader implements Runnable{
+	public class MessageReader implements Runnable{
 		@Override
 		public void run(){
 			while (running){
-				String message_from_server = in.nextLine();
-				System.out.println(message_from_server);
+				if (in.hasNext()) {
+					String message_from_server = in.nextLine();
+
+					if (message_from_server.trim().equals("New member joined to server")){
+						System.out.println();
+						System.out.println("==========================");
+						System.out.println(message_from_server);
+						System.out.println();
+					}
+					else if (message_from_server.trim().equals("<clients_number>")){
+						flag = true;
+					}
+
+					else if (flag){
+						System.out.println();
+						System.out.println(message_from_server);
+						System.out.println();
+						System.out.print(name + ": ");
+						flag = false;
+					}
+
+					else{
+						System.out.println(message_from_server);
+					}
+				}
 			}
 		}
 	}
 
-	private class MessageWriter implements Runnable{
+	public class MessageWriter implements Runnable{
 		@Override
 		public void run(){
-			Scanner input = new Scanner(System.in);
-
 			while (running){
 				String message = input.nextLine();
 
-				if ("exit".equals(message)){
-					running = false;
-					out.println("DISCONNECTED");
+				if ("exit".equalsIgnoreCase(message)){
+					if (!name.isEmpty()){
+						out.println(name + " left the server");
+					}
+					else{
+						out.println("<unknown user> left the server");
+					}
+
+					out.flush();
 					closeStreams();
+					running = false;
 					break;
 				}
 
-				out.println(message);
+				out.println(name + ": " + message);
+				out.flush();
 			}
 		}
 	}
 
-	private void closeStreams(){
+	public void closeStreams(){
 		try{
 			if (clientSocket != null) clientSocket.close();
 			if (in != null) in.close();
