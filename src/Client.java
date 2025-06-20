@@ -60,7 +60,7 @@ public class Client{
 						flag = true;
 					}
 
-					else if (flag){
+					else if (true){ // I didn't notice it, but it always worked like that! 🤣🤣🤣
 						System.out.println();
 						System.out.println(message_from_server);
 						System.out.println();
@@ -80,6 +80,7 @@ public class Client{
 		@Override
 		public void run(){
 			while (running){
+				//System.out.print(name + ": ");
 				String message = input.nextLine();
 
 				if ("exit".equalsIgnoreCase(message)){
