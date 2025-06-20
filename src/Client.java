@@ -8,12 +8,13 @@ public class Client{
 	private static final String SERVER_HOST = "localhost";
 	private static final int SERVER_PORT = 8081;
 
-	private Socket client_socket;
+	private Socket clientSocket;
 	private PrintWriter out;
 	private Scanner in;
 	private Scanner input;
 	private String name;
-	private Boolean flag;
+	private boolean flag = false;
+	private boolean running =  true;
 
 	public String getName(){
 		return this.name;
@@ -21,24 +22,23 @@ public class Client{
 
 	public Client(){
 		try{
-			client_socket = new Socket(SERVER_HOST, SERVER_PORT);
-			out = new PrintWriter(client_socket.getOutputStream());
-			in = new Scanner(client_socket.getInputStream());
+			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
+			out = new PrintWriter(clientSocket.getOutputStream());
+			in = new Scanner(clientSocket.getInputStream());
 			input = new Scanner(System.in);
-			flag = false;
 
 			System.out.println("Connected");
-			System.out.println("All streams established");
+			System.out.println("All streams are established");
 		}
 
 		catch (IOException ex){
 			ex.printStackTrace();
+			closeStreams();
 		}
 
 		System.out.print("Enter your name: ");
 		name = input.nextLine();
 		System.out.println();
-
 
 		new Thread(new Runnable() {
 			@Override
@@ -99,7 +99,7 @@ public class Client{
 								out.flush();
 								out.close();
 								in.close();
-								client_socket.close();
+								clientSocket.close();
 
 								System.out.println("All streams closed");
 								break;
@@ -120,5 +120,47 @@ public class Client{
 				}
 			}
 		}).start();
+	}
+
+	private class MessageReader implements Runnable{
+		@Override
+		public void run(){
+			while (running){
+				String message_from_server = in.nextLine();
+				System.out.println(message_from_server);
+			}
+		}
+	}
+
+	private class MessageWriter implements Runnable{
+		@Override
+		public void run(){
+			Scanner input = new Scanner(System.in);
+
+			while (running){
+				String message = input.nextLine();
+
+				if ("exit".equals(message)){
+					running = false;
+					out.println("DISCONNECTED");
+					closeStreams();
+					break;
+				}
+
+				out.println(message);
+			}
+		}
+	}
+
+	private void closeStreams(){
+		try{
+			if (clientSocket != null) clientSocket.close();
+			if (in != null) in.close();
+			if (out != null) out.close();
+			System.out.println("All streams are closed");
+		}
+		catch (IOException ex){
+			ex.printStackTrace();
+		}
 	}
 }
