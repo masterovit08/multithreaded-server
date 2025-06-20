@@ -3,7 +3,6 @@ package src;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientHandler implements Runnable{
@@ -38,9 +37,9 @@ public class ClientHandler implements Runnable{
 	public void run(){
 		try{
 			while (true){
-				server.sendData("New member joined to server");
-				server.sendData("<clients_number>");
-				server.sendData("Members online: " + clients_number);
+				server.broadcastMessage("New member joined to server");
+				server.broadcastMessage("<clients_number>");
+				server.broadcastMessage("Members online: " + clients_number);
 				break;
 			}
 
@@ -53,7 +52,7 @@ public class ClientHandler implements Runnable{
 					}
 
 					System.out.println("User: " + message);
-					server.sendData(message);
+					server.broadcastMessage(message);
 				}
 
 				Thread.sleep(1000);
@@ -83,6 +82,6 @@ public class ClientHandler implements Runnable{
 	public void close(){
 		server.removeClient(this);
 		clients_number--;
-		server.sendData("Members online: " + clients_number);
+		server.broadcastMessage("Members online: " + clients_number);
 	}
 }

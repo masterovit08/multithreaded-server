@@ -1,32 +1,26 @@
 package src;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Server{
 	static final int PORT = 8081;
 
-	private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
-	private ArrayList<LocalTime> times = new ArrayList<LocalTime>();
-	private ArrayList<LocalDate> dates = new ArrayList<LocalDate>();
+	private final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<ClientHandler>();
+	private final ArrayList<LocalTime> times = new ArrayList<LocalTime>();
+	private final ArrayList<LocalDate> dates = new ArrayList<LocalDate>();
 
 	public Server(){
-		Socket client_socket = null;
-
-		ServerSocket server = null;
-
-		try{
-			server = new ServerSocket(PORT);
-
+		try (ServerSocket server = new ServerSocket(PORT)){
 			System.out.println("Server created and ready to use");
 
 			while (true){
-				client_socket = server.accept();
+				Socket client_socket = server.accept();
 
 				LocalTime time = LocalTime.now();
 				LocalDate date = LocalDate.now();
@@ -61,22 +55,9 @@ public class Server{
 		catch (IOException ex){
 			ex.printStackTrace();
 		}
-
-		finally{
-			try{
-				client_socket.close();
-				server.close();
-
-				System.out.println("Server interrupted");
-			}
-
-			catch (IOException ex){
-				ex.printStackTrace();
-			}
-		}
 	}
 
-	public void sendData(String string){
+	public void broadcastMessage(String string){
 		for (ClientHandler cl : clients){
 			cl.sendString(string);
 		}
