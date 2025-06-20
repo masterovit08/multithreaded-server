@@ -7,22 +7,19 @@ import java.util.Scanner;
 
 public class ClientHandler implements Runnable{
 	private Server server;
+	private Socket client_socket;
 
 	private PrintWriter out;
-
 	private Scanner in;
-	private static final String HOST = "localhost";
-	private static final int PORT = 3443;
-
-	private Socket client_socket = null;
 
 	private static int clients_number = 0;
 
 	public ClientHandler(Socket socket, Server server){
+		clients_number++;
+		this.client_socket = socket;
+		this.server = server;
+
 		try{
-			clients_number++;
-			this.client_socket = socket;
-			this.server = server;
 			this.out = new PrintWriter(socket.getOutputStream());
 			this.in = new Scanner(socket.getInputStream());
 		}
@@ -36,52 +33,46 @@ public class ClientHandler implements Runnable{
 	@Override
 	public void run(){
 		try{
-			while (true){
-				server.broadcastMessage("New member joined to server");
-				server.broadcastMessage("<clients_number>");
-				server.broadcastMessage("Members online: " + clients_number);
-				break;
-			}
+			server.broadcastMessage("New member joined to server");
+			server.broadcastMessage("<clients_number>");
+			server.broadcastMessage("Members online: " + clients_number);
 
 			while (true){
-				if (in.hasNext()){
+				if (in.hasNextLine()){
 					String message = in.nextLine();
 
 					if (message.equalsIgnoreCase("exit")){
 						break;
 					}
 
-					System.out.println("User: " + message);
+					System.out.println(message);
 					server.broadcastMessage(message);
 				}
 
 				Thread.sleep(1000);
 			}
-		}
-
-		catch (InterruptedException ex){
+		} catch (InterruptedException ex){
 			ex.printStackTrace();
-		}
-
-		finally{
+		} finally{
 			this.close();
 		}
 	}
 
-	public void sendString(String data){
-		try{
-			out.println(data);
-			out.flush();
-		}
-
-		catch (Exception ex){
-			ex.printStackTrace();
-		}
+	public void sendMessage(String data){
+		out.println(data);
+		out.flush();
 	}
 
 	public void close(){
-		server.removeClient(this);
-		clients_number--;
-		server.broadcastMessage("Members online: " + clients_number);
+		try{
+			in.close();
+			out.close();
+			client_socket.close();
+			server.removeClient(this);
+			clients_number--;
+			server.broadcastMessage("Members online: " + clients_number);
+		} catch (IOException ex){
+			ex.printStackTrace();
+		}
 	}
 }

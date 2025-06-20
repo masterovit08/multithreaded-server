@@ -11,7 +11,7 @@ import java.time.LocalTime;
 public class Server{
 	static final int PORT = 8081;
 
-	private final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<ClientHandler>();
+	private final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
 	private final ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 	private final ArrayList<LocalDate> dates = new ArrayList<LocalDate>();
 
@@ -59,7 +59,7 @@ public class Server{
 
 	public void broadcastMessage(String string){
 		for (ClientHandler cl : clients){
-			cl.sendString(string);
+			cl.sendMessage(string);
 		}
 	}
 
