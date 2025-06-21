@@ -61,19 +61,20 @@ public class Client{
 					String message_from_server = in.nextLine();
 					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
 
-					switch (deserialized_message.command){
-						case "user_message":
-							System.out.println("\n" + deserialized_message.sender + ": " + deserialized_message.message);
-							break;
-						case "user_joining":
-							System.out.println("\n" + deserialized_message.sender + " joined the server\n");
-							break;
-						case "user_disconnection":
-							System.out.println("\n" + deserialized_message.sender + " disconnected from the server\n");
-							break;
+					if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")){
+						switch (deserialized_message.command){
+							case "user_message":
+								System.out.println("\n" + deserialized_message.sender + ": " + deserialized_message.message);
+								break;
+							case "user_joining":
+								System.out.println("\n" + deserialized_message.sender + " joined the server\n");
+								break;
+							case "user_disconnection":
+								System.out.println("\n" + deserialized_message.sender + " disconnected from the server\n");
+								break;
+						}
+						System.out.print(name + ": ");
 					}
-
-					System.out.print(name + ": ");
 				}
 			}
 		}
@@ -108,6 +109,8 @@ public class Client{
 
 				out.println(jsonMessage);
 				out.flush();
+
+				System.out.print(name + ": ");
 			}
 		}
 	}
