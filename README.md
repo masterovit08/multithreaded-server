@@ -12,26 +12,37 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 <details>
   <summary><b>Starting the server</b></summary>
 
+**Linux**:
   ```
   make
-  java src.Main server
+  java -cp lib/gson-2.13.1.jar:out src.Main server
   ```
-
+**Windows**:
+  ```
+  make
+  java -cp lib\gson-2.13.1.jar;out src.Main server
+  ```
 </details>
 
 <details>
   <summary><b>Starting the client</b></summary>
 
+**Linux**:
   ```
   make
-  java src.Main client
+  java -cp lib/gson-2.13.1.jar:out src.Main client
+  ```
+**Windows**:
+  ```
+  make
+  java -cp lib\gson-2.13.1.jar;out src.Main client
   ```
 </details>
 
 > [!NOTE]
 > There is also an interactive class selection in the absence of command line parameters.
 > ```
-> $ make && java src.Main
+> $ make && java -cp lib/gson-2.13.1.jar:out src.Main
 > 
 > Select startup mode
 > 1 - Server
