@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import com.google.gson.Gson;
 
 public class ClientHandler implements Runnable{
 	private Server server;
@@ -33,20 +34,23 @@ public class ClientHandler implements Runnable{
 	@Override
 	public void run(){
 		try{
-			server.broadcastMessage("New member joined to server");
-			server.broadcastMessage("<clients_number>");
-			server.broadcastMessage("Members online: " + clients_number);
+			String newUserJsonMessage = in.nextLine();
+			server.broadcastMessage(newUserJsonMessage);
 
 			while (true){
 				if (in.hasNextLine()){
-					String message = in.nextLine();
+					String jsonMessage = in.nextLine();
+					Message message = new Gson().fromJson(jsonMessage, Message.class);
 
-					if (message.equalsIgnoreCase("exit")){
+					if (message.command.equals("user_disconnection")){
+						server.broadcastMessage(jsonMessage);
+
+						System.out.println(message.sender + ": disconnected from the server");
 						break;
 					}
 
-					System.out.println(message);
-					server.broadcastMessage(message);
+					System.out.println(message.sender + ": " + message.message);
+					server.broadcastMessage(jsonMessage);
 				}
 
 				Thread.sleep(1000);
@@ -58,8 +62,8 @@ public class ClientHandler implements Runnable{
 		}
 	}
 
-	public void sendMessage(String data){
-		out.println(data);
+	public void sendMessage(String jsonMessage){
+		out.println(jsonMessage);
 		out.flush();
 	}
 
@@ -73,6 +77,21 @@ public class ClientHandler implements Runnable{
 			server.broadcastMessage("Members online: " + clients_number);
 		} catch (IOException ex){
 			ex.printStackTrace();
+		}
+	}
+
+	public static class Message{
+		private String message;
+		private String sender;
+		private String command;
+
+		@Override
+		public String toString(){
+			return "Message{" +
+					"message='" + message + '\'' +
+					", sender='" + sender + '\'' +
+					", command='" + command + '\'' +
+					'}';
 		}
 	}
 }

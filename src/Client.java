@@ -3,6 +3,7 @@ package src;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import com.google.gson.Gson;
 
 public class Client{
 	private static final String SERVER_HOST = "localhost";
@@ -39,6 +40,15 @@ public class Client{
 		name = input.nextLine();
 		System.out.println();
 
+		Message register_message = new Message();
+		register_message.command = "user_joining";
+		register_message.sender = name;
+		register_message.message = "";
+
+		String jsonMessage = new Gson().toJson(register_message);
+		out.println(jsonMessage);
+		out.flush();
+
 		new Thread(new MessageReader()).start();
 		new Thread(new MessageWriter()).start();
 	}
@@ -49,28 +59,21 @@ public class Client{
 			while (running){
 				if (in.hasNext()) {
 					String message_from_server = in.nextLine();
+					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
 
-					if (message_from_server.trim().equals("New member joined to server")){
-						System.out.println();
-						System.out.println("==========================");
-						System.out.println(message_from_server);
-						System.out.println();
-					}
-					else if (message_from_server.trim().equals("<clients_number>")){
-						flag = true;
-					}
-
-					else if (true){ // I didn't notice it, but it always worked like that! 🤣🤣🤣
-						System.out.println();
-						System.out.println(message_from_server);
-						System.out.println();
-						System.out.print(name + ": ");
-						flag = false;
+					switch (deserialized_message.command){
+						case "user_message":
+							System.out.println("\n" + deserialized_message.sender + ": " + deserialized_message.message);
+							break;
+						case "user_joining":
+							System.out.println("\n" + deserialized_message.sender + " joined the server\n");
+							break;
+						case "user_disconnection":
+							System.out.println("\n" + deserialized_message.sender + " disconnected from the server\n");
+							break;
 					}
 
-					else{
-						System.out.println(message_from_server);
-					}
+					System.out.print(name + ": ");
 				}
 			}
 		}
@@ -80,24 +83,30 @@ public class Client{
 		@Override
 		public void run(){
 			while (running){
-				//System.out.print(name + ": ");
-				String message = input.nextLine();
+				String stringMessage = input.nextLine();
+				Message message = new Message();
+				message.sender = name;
 
-				if ("exit".equalsIgnoreCase(message)){
-					if (!name.isEmpty()){
-						out.println(name + " left the server");
-					}
-					else{
-						out.println("<unknown user> left the server");
-					}
+				if ("exit".equalsIgnoreCase(stringMessage)){
+					message.command = "user_disconnection";
+					message.message = "";
 
+					String jsonMessage = new Gson().toJson(message);
+
+					out.println(jsonMessage);
 					out.flush();
+
 					closeStreams();
 					running = false;
 					break;
 				}
 
-				out.println(name + ": " + message);
+				message.message = stringMessage;
+				message.command = "user_message";
+
+				String jsonMessage = new Gson().toJson(message);
+
+				out.println(jsonMessage);
 				out.flush();
 			}
 		}
@@ -112,6 +121,21 @@ public class Client{
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
+		}
+	}
+
+	public static class Message{
+		private String message;
+		private String sender;
+		private String command;
+
+		@Override
+		public String toString(){
+			return "Message{" +
+					"message='" + message + '\'' +
+					", sender='" + sender + '\'' +
+					", command='" + command + '\'' +
+					'}';
 		}
 	}
 }

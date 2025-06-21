@@ -57,9 +57,9 @@ public class Server{
 		}
 	}
 
-	public void broadcastMessage(String string){
+	public void broadcastMessage(String jsonMessage){
 		for (ClientHandler cl : clients){
-			cl.sendMessage(string);
+			cl.sendMessage(jsonMessage);
 		}
 	}
 
