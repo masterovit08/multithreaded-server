@@ -50,6 +50,10 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 > Number:
 > ```
 
+## Dependencies
+- **OpenJDK** (*tested on 17.0.15*)
+- **Gson** (*tested on 2.13.1*)
+
 ## Want to contribute?
 It's not hard. Just fork and then send a pull request. The project is really young and weak and therefore needs your help :)
 
