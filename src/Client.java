@@ -73,6 +73,7 @@ public class Client{
 								System.out.println("\n" + deserialized_message.sender + " disconnected from the server\n");
 								break;
 						}
+
 						System.out.print(name + ": ");
 					}
 				}

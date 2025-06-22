@@ -74,7 +74,6 @@ public class ClientHandler implements Runnable{
 			client_socket.close();
 			server.removeClient(this);
 			clients_number--;
-			server.broadcastMessage("Members online: " + clients_number);
 		} catch (IOException ex){
 			ex.printStackTrace();
 		}
