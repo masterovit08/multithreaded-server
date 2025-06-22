@@ -98,8 +98,8 @@ public class Client{
 					out.println(jsonMessage);
 					out.flush();
 
-					closeStreams();
 					running = false;
+					closeStreams();
 					break;
 				}
 
