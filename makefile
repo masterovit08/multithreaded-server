@@ -1,4 +1,4 @@
 all:
 	javac -cp lib/gson-2.13.1.jar -d out src/*.java
 clean:
-	rm src/*.class
+	rm out/*.class
