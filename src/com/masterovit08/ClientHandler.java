@@ -33,32 +33,24 @@ public class ClientHandler implements Runnable{
 
 	@Override
 	public void run(){
-		try{
-			String newUserJsonMessage = in.nextLine();
-			server.broadcastMessage(newUserJsonMessage);
+		String newUserJsonMessage = in.nextLine();
+		server.broadcastMessage(newUserJsonMessage);
 
-			while (true){
-				if (in.hasNextLine()){
-					String jsonMessage = in.nextLine();
-					Message message = new Gson().fromJson(jsonMessage, Message.class);
+		while (true){
+			if (in.hasNextLine()){
+				String jsonMessage = in.nextLine();
+				Message message = new Gson().fromJson(jsonMessage, Message.class);
 
-					if (message.command.equals("user_disconnection")){
-						server.broadcastMessage(jsonMessage);
-
-						System.out.println(message.sender + ": disconnected from the server");
-						break;
-					}
-
-					System.out.println(message.sender + ": " + message.message);
+				if (message.command.equals("user_disconnection")){
 					server.broadcastMessage(jsonMessage);
+
+					System.out.println(message.sender + ": disconnected from the server");
+					break;
 				}
 
-				Thread.sleep(1000);
+				System.out.println(message.sender + ": " + message.message);
+				server.broadcastMessage(jsonMessage);
 			}
-		} catch (InterruptedException ex){
-			ex.printStackTrace();
-		} finally{
-			this.close();
 		}
 	}
 
