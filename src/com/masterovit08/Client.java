@@ -1,4 +1,4 @@
-package src;
+package com.masterovit08;
 
 import java.io.*;
 import java.net.Socket;

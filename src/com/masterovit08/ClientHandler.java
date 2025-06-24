@@ -1,4 +1,4 @@
-package src;
+package com.masterovit08;
 
 import java.io.IOException;
 import java.io.PrintWriter;
