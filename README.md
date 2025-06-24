@@ -5,9 +5,7 @@ This is a <ins>console version</ins> of a simple chat that allows you to exchang
 
 ## How to start it?
 
-Since Java requires the presence of the main class Main, for ease of launch there is the possibility to initialize the server or client classes using command line arguments.
-> [!WARNING]
-> **PLEASE NOTE** that you need to generate a .class file before running. To do this, simply run in the terminal `make`
+Since Java requires the presence of the main class Main, for ease of launch there is the possibility to initialize the server or client classes using **command line arguments**.
 
 <details>
   <summary><b>Starting the server</b></summary>
@@ -15,12 +13,12 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 **Linux**:
   ```
   make
-  java -cp lib/gson-2.13.1.jar:out src.Main server
+  java -jar target/multithreaded-server.jar Server
   ```
 **Windows**:
   ```
   make
-  java -cp lib\gson-2.13.1.jar;out src.Main server
+  java -jar target\multithreaded-server.jar Server
   ```
 </details>
 
@@ -30,19 +28,19 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 **Linux**:
   ```
   make
-  java -cp lib/gson-2.13.1.jar:out src.Main client
+  java -jar target/multithreaded-server.jar Client
   ```
 **Windows**:
   ```
   make
-  java -cp lib\gson-2.13.1.jar;out src.Main client
+  java -jar target\multithreaded-server.jar Client
   ```
 </details>
 
 > [!NOTE]
 > There is also an interactive class selection in the absence of command line parameters.
 > ```
-> $ make && java -cp lib/gson-2.13.1.jar:out src.Main
+> $ make && java -jar target/multithreaded-server.jar
 > 
 > Select startup mode
 > 1 - Server
@@ -52,6 +50,7 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 
 ## Dependencies
 - **OpenJDK** (*tested on 17.0.15*)
+- **Maven** (*tested on 3.8.7*)
 - **Gson** (*tested on 2.13.1*)
 
 ## Want to contribute?
