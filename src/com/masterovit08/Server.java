@@ -59,7 +59,7 @@ public class Server{
 
 	public void broadcastMessage(String jsonMessage){
 		for (ClientHandler cl : clients){
-			cl.sendMessage(jsonMessage);
+			if (cl.active()) cl.sendMessage(jsonMessage);
 		}
 	}
 

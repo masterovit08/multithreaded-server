@@ -14,6 +14,7 @@ public class ClientHandler implements Runnable{
 	private Scanner in;
 
 	private static int clients_number = 0;
+	private boolean active = false;
 
 	public ClientHandler(Socket socket, Server server){
 		clients_number++;
@@ -35,6 +36,7 @@ public class ClientHandler implements Runnable{
 	public void run(){
 		String newUserJsonMessage = in.nextLine();
 		server.broadcastMessage(newUserJsonMessage);
+		this.active = true;
 
 		while (true){
 			if (in.hasNextLine()){
@@ -52,6 +54,10 @@ public class ClientHandler implements Runnable{
 				server.broadcastMessage(jsonMessage);
 			}
 		}
+	}
+
+	public boolean active(){
+		return this.active;
 	}
 
 	public void sendMessage(String jsonMessage){

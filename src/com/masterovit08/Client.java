@@ -14,7 +14,6 @@ public class Client{
 	private Scanner in;
 	private Scanner input;
 	private String name;
-	private boolean flag = false;
 	private boolean running = true;
 
 	public String getName(){
@@ -48,6 +47,8 @@ public class Client{
 		String jsonMessage = new Gson().toJson(register_message);
 		out.println(jsonMessage);
 		out.flush();
+
+		System.out.print(name + ": ");
 
 		new Thread(new MessageReader()).start();
 		new Thread(new MessageWriter()).start();
