@@ -15,5 +15,8 @@ jobs:
       - name: Install JDK
         run: sudo apt update && sudo apt install -y default-jdk make
 
+      - name: Install Maven
+        run: sudo apt install -y maven
+
       - name: Build a project
         run: make
