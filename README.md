@@ -7,6 +7,9 @@ This is a <ins>console version</ins> of a simple chat that allows you to exchang
 
 Since Java requires the presence of the main class Main, for ease of launch there is the possibility to initialize the server or client classes using **command line arguments**.
 
+> [!IMPORTANT]
+> Make sure you have Maven installed, which is required to build this project. (See [Dependencies](#dependencies))
+
 <details>
   <summary><b>Starting the server</b></summary>
 
