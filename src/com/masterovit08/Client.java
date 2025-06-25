@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 import com.google.gson.Gson;
+import org.jline.reader.*;
+import org.jline.terminal.*;
 
 public class Client{
 	private static final String SERVER_HOST = "localhost";
@@ -12,9 +14,11 @@ public class Client{
 	private Socket clientSocket;
 	private PrintWriter out;
 	private Scanner in;
-	private Scanner input;
 	private String name;
 	private boolean running = true;
+
+	private Terminal terminal;
+	private LineReader reader;
 
 	public String getName(){
 		return this.name;
@@ -25,7 +29,9 @@ public class Client{
 			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
 			out = new PrintWriter(clientSocket.getOutputStream());
 			in = new Scanner(clientSocket.getInputStream());
-			input = new Scanner(System.in);
+
+			terminal = TerminalBuilder.builder().system(true).build();
+			reader = LineReaderBuilder.builder().terminal(terminal).build();
 
 			System.out.println("Connected");
 			System.out.println("All streams are established");
@@ -35,8 +41,7 @@ public class Client{
 			closeStreams();
 		}
 
-		System.out.print("Enter your name: ");
-		name = input.nextLine();
+		name = reader.readLine("Enter your name: ");
 		System.out.println();
 
 		Message register_message = new Message();
@@ -48,8 +53,6 @@ public class Client{
 		out.println(jsonMessage);
 		out.flush();
 
-		System.out.print(name + ": ");
-
 		new Thread(new MessageReader()).start();
 		new Thread(new MessageWriter()).start();
 	}
@@ -59,23 +62,27 @@ public class Client{
 		public void run(){
 			while (running){
 				if (in.hasNext()) {
+					String currentBuffer = reader.getBuffer().toString();
 					String message_from_server = in.nextLine();
 					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
 
 					if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")){
+						terminal.writer().print("\033[2K");
+
 						switch (deserialized_message.command){
 							case "user_message":
-								System.out.println("\n" + deserialized_message.sender + ": " + deserialized_message.message);
+								terminal.writer().println("\r" + deserialized_message.sender + ": " + deserialized_message.message);
 								break;
 							case "user_joining":
-								System.out.println("\n" + deserialized_message.sender + " joined the server\n");
+								terminal.writer().println("\r" + deserialized_message.sender + " joined the server");
 								break;
 							case "user_disconnection":
-								System.out.println("\n" + deserialized_message.sender + " disconnected from the server\n");
+								terminal.writer().println("\r" + deserialized_message.sender + " disconnected from the server");
 								break;
 						}
 
-						System.out.print(name + ": ");
+						terminal.writer().print(name + ": " + currentBuffer);
+						terminal.flush();
 					}
 				}
 			}
@@ -86,7 +93,7 @@ public class Client{
 		@Override
 		public void run(){
 			while (running){
-				String stringMessage = input.nextLine();
+				String stringMessage = reader.readLine(name + ": ");
 				Message message = new Message();
 				message.sender = name;
 
@@ -111,8 +118,6 @@ public class Client{
 
 				out.println(jsonMessage);
 				out.flush();
-
-				System.out.print(name + ": ");
 			}
 		}
 	}
