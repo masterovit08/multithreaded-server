@@ -12,31 +12,19 @@ Since Java requires the presence of the main class Main, for ease of launch ther
 
 <details>
   <summary><b>Starting the server</b></summary>
-
-**Linux**:
+  
   ```
   make
   java -jar target/multithreaded-server.jar Server
-  ```
-**Windows**:
-  ```
-  make
-  java -jar target\multithreaded-server.jar Server
   ```
 </details>
 
 <details>
   <summary><b>Starting the client</b></summary>
 
-**Linux**:
   ```
   make
   java -jar target/multithreaded-server.jar Client
-  ```
-**Windows**:
-  ```
-  make
-  java -jar target\multithreaded-server.jar Client
   ```
 </details>
 
