@@ -8,8 +8,8 @@ import org.jline.reader.*;
 import org.jline.terminal.*;
 
 public class Client{
-	private static final String SERVER_HOST = "localhost";
-	private static final int SERVER_PORT = 8081;
+	private static String SERVER_HOST;
+	private static int SERVER_PORT;
 
 	private Socket clientSocket;
 	private PrintWriter out;
@@ -24,7 +24,10 @@ public class Client{
 		return this.name;
 	}
 
-	public Client() {
+	public Client(String host, int port){
+		SERVER_HOST = host;
+		SERVER_PORT = port;
+
 		try {
 			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
 			out = new PrintWriter(clientSocket.getOutputStream());

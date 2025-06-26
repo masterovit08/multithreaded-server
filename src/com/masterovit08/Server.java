@@ -9,13 +9,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Server{
-	static final int PORT = 8081;
+	private static int PORT;
 
 	private final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
 	private final ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 	private final ArrayList<LocalDate> dates = new ArrayList<LocalDate>();
 
-	public Server(){
+	public Server(int port){
+		PORT = port;
+
 		try (ServerSocket server = new ServerSocket(PORT)){
 			System.out.println("Server created and ready to use");
 

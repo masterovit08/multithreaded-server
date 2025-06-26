@@ -1,55 +1,75 @@
 package com.masterovit08;
 
 import java.util.Scanner;
+import com.beust.jcommander.*;
 
 public class Main {
+    @Parameter(names = {"--mode", "-m"})
+    private String mode;
+
+    @Parameter(names = {"--server-ip", "-ip"})
+    private String serverIp;
+
+    @Parameter(names = {"--port", "-p"})
+    private int port;
+
     public static void main(String[] args) {
-        if (args.length > 0) {
-            handleCommandLineArgs(args);
-        } else {
-            interactiveMode();
-        }
+        Main main = new Main();
+        JCommander.newBuilder().addObject(main).build().parse(args);
+        main.run();
     }
 
-    private static void handleCommandLineArgs(String[] args) {
-        String mode = args[0].toLowerCase();
-        switch (mode) {
+    public void run(){
+        if (mode == null) interactiveInput("mode");
+
+        switch (mode){
             case "server":
-                Server server = new Server();
+                if (port == 0)  interactiveInput("port");
+
+                Server server = new Server(port);
                 break;
+
             case "client":
-                Client client = new Client();
+                if (serverIp == null) interactiveInput("server-ip");
+                if (port == 0) interactiveInput("port");
+
+                Client client = new Client(serverIp, port);
                 break;
+
             default:
-                System.out.println("Unknown parameter. Use 'server' or 'client'");
-                System.exit(1);
+                System.out.println("Invalid mode: " + mode);
+                System.out.println("Use 'server' or 'client'");
+                System.exit(-1);
         }
     }
 
-    private static void interactiveMode() {
-        Scanner scanner = new Scanner(System.in);
+    private void interactiveInput(String parameter){
+        Scanner input = new Scanner(System.in);
 
-        System.out.println("Select startup mode");
-        System.out.println("1 - Server");
-        System.out.println("2 - Client");
-        System.out.print("Number:");
+        switch (parameter){
+            case "mode":
+                System.out.println("Select startup mode");
+                System.out.println("1 - Server");
+                System.out.println("2 - Client");
+                System.out.print("Number: ");
 
-        try {
-            int choice = scanner.nextInt();
-            switch (choice) {
-                case 1:
-                    Server server = new Server();
-                    break;
-                case 2:
-                    Client client = new Client();
-                    break;
-                default:
-                    System.out.println("Incorrect choice. Enter 1 or 2");
-                    System.exit(1);
-            }
-        } catch (Exception e) {
-            System.out.println("Input error. Please enter a number");
-            System.exit(1);
+                int number = input.nextInt();
+
+                if (number == 1) mode = "server";
+                else mode = "client";
+                break;
+
+            case "server-ip":
+                System.out.print("Server IP: ");
+                serverIp = input.next();
+                break;
+
+            case "port":
+                System.out.print("Port: ");
+                port = input.nextInt();
+                break;
+
+
         }
     }
 }
