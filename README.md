@@ -59,13 +59,14 @@ COMMAND LINE OPTIONS:
 	--help OR -h - Show this help
 
 EXAMPLE:
-	Starting the server: java -jar target/multithreaded-server.jar --mode server --port 8081
+	Starting the server: 
+		java -jar target/multithreaded-server.jar --mode server --port 8081
 
-	Starting the client: java -jar target/multithreaded-server.jar --mode client --server-ip localhost --port 8081
+	Starting the client: 
+		java -jar target/multithreaded-server.jar --mode client --server-ip localhost --port 8081
 
 NOTE:
 	All required unpassed parameters will be requested interactively.
-
 ```
 
 ## Dependencies
