@@ -13,11 +13,9 @@ public class ClientHandler implements Runnable{
 	private PrintWriter out;
 	private Scanner in;
 
-	private static int clients_number = 0;
 	private boolean active = false;
 
 	public ClientHandler(Socket socket, Server server){
-		clients_number++;
 		this.client_socket = socket;
 		this.server = server;
 
@@ -47,6 +45,7 @@ public class ClientHandler implements Runnable{
 					server.broadcastMessage(jsonMessage);
 
 					System.out.println(message.sender + ": disconnected from the server");
+					this.close();
 					break;
 				}
 
@@ -71,7 +70,6 @@ public class ClientHandler implements Runnable{
 			out.close();
 			client_socket.close();
 			server.removeClient(this);
-			clients_number--;
 		} catch (IOException ex){
 			ex.printStackTrace();
 		}
