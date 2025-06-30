@@ -2,6 +2,8 @@ package com.masterovit08;
 
 import java.util.Scanner;
 import com.beust.jcommander.*;
+import java.util.Properties;
+import java.io.*;
 
 public class Main {
     @Parameter(names = {"--mode", "-m"})
@@ -16,6 +18,9 @@ public class Main {
     @Parameter(names = {"--help", "-h"}, help = true)
     private boolean help;
 
+    @Parameter(names = {"--version", "-v"})
+    private boolean version = false;
+
     public static void main(String[] args) {
         Main main = new Main();
         JCommander.newBuilder().addObject(main).build().parse(args);
@@ -24,6 +29,7 @@ public class Main {
 
     public void run(){
         if (help) showHelp();
+        else if (version) showVersion();
         if (mode == null) interactiveInput("mode");
 
         switch (mode){
@@ -72,6 +78,30 @@ public class Main {
                 System.out.print("Port: ");
                 port = input.nextInt();
                 break;
+        }
+    }
+
+    private void showVersion(){
+        String version = "unknown";
+
+        try (InputStream stream = Main.class.getResourceAsStream("/META-INF/maven/com.masterovit08/multithreaded-server/pom.properties")){
+            if (stream != null) {
+                Properties properties = new Properties();
+                properties.load(stream);
+                version = properties.getProperty("version");
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        if (version.equals("unknown")) {
+            System.out.println("Multithreaded Server v<unknown>");
+            System.exit(1);
+        }
+
+        else{
+            System.out.println("Multithreaded Server v" + version);
+            System.exit(0);
         }
     }
 
