@@ -57,6 +57,7 @@ COMMAND LINE OPTIONS:
 	--server-ip OR -ip [localhost OR other ip] - Server IP address, ONLY NEEDED FOR CLIENT
 	--port OR -p [Any integer from 0 to 65535] - Server port to connect to
 	--help OR -h - Show this help
+	--version OR -v - Show project version
 
 EXAMPLE:
 	Starting the server: 
