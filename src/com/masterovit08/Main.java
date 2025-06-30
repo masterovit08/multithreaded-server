@@ -114,6 +114,7 @@ public class Main {
         System.out.println("\t--server-ip OR -ip [localhost OR other ip] - Server IP address, ONLY NEEDED FOR CLIENT");
         System.out.println("\t--port OR -p [Any integer from 0 to 65535] - Server port to connect to");
         System.out.println("\t--help OR -h - Show this help\n");
+        System.out.println("\t--version OR -v - Show project version\n");
         System.out.println("\033[1mEXAMPLE:\033[0m");
         System.out.println("\tStarting the server: \n\t\tjava -jar target/multithreaded-server.jar --mode server --port 8081\n");
         System.out.println("\tStarting the client: \n\t\tjava -jar target/multithreaded-server.jar --mode client --server-ip localhost --port 8081\n");
