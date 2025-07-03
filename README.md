@@ -1,4 +1,7 @@
 # Multithreaded messaging server
+[![Build with Maven](https://github.com/masterovit08/multithreaded-server/actions/workflows/maven.yml/badge.svg)](https://github.com/masterovit08/multithreaded-server/actions/workflows/maven.yml) ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/t/masterovit08/multithreaded-server/main?label=total%20commits) ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/masterovit08/multithreaded-server/main)
+
+
 
 ## ABOUT
 This is a <ins>console version</ins> of a simple chat that allows you to exchange messages with other clients connected to the server.
