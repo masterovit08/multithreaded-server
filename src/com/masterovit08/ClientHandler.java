@@ -49,7 +49,6 @@ public class ClientHandler implements Runnable{
 					break;
 				}
 
-				System.out.println(message.sender + ": " + message.message);
 				server.broadcastMessage(jsonMessage);
 			}
 		}
