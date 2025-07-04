@@ -8,10 +8,7 @@ import org.jline.reader.*;
 import org.jline.terminal.*;
 
 public class Client{
-	private static String SERVER_HOST;
-	private static int SERVER_PORT;
-
-	private Socket clientSocket;
+    private Socket clientSocket;
 	private PrintWriter out;
 	private Scanner in;
 	private String name;
@@ -20,16 +17,17 @@ public class Client{
 	private Terminal terminal;
 	private LineReader reader;
 
+	private Thread readerThread;
+	private Thread writerThread;
+
 	public String getName(){
 		return this.name;
 	}
 
 	public Client(String host, int port){
-		SERVER_HOST = host;
-		SERVER_PORT = port;
 
-		try {
-			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
+        try {
+			clientSocket = new Socket(host, port);
 			out = new PrintWriter(clientSocket.getOutputStream());
 			in = new Scanner(clientSocket.getInputStream());
 
@@ -56,14 +54,21 @@ public class Client{
 		out.println(jsonMessage);
 		out.flush();
 
-		new Thread(new MessageReader()).start();
-		new Thread(new MessageWriter()).start();
+		this.readerThread = new Thread(new MessageReader());
+		this.writerThread = new Thread(new MessageWriter());
+
+		readerThread.start();
+		writerThread.start();
 	}
 
 	public class MessageReader implements Runnable{
 		@Override
 		public void run(){
 			while (running){
+				if (Thread.currentThread().isInterrupted()){
+					break;
+				}
+
 				if (in.hasNext()) {
 					String currentBuffer = reader.getBuffer().toString();
 					String message_from_server = in.nextLine();
@@ -108,6 +113,8 @@ public class Client{
 
 					out.println(jsonMessage);
 					out.flush();
+
+					readerThread.interrupt();
 
 					running = false;
 					closeStreams();

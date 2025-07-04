@@ -25,10 +25,10 @@ public class ClientHandler implements Runnable{
 		}
 
 		catch (IOException ex){
+			ServerLogger.error("ERROR IN SETTING UP I/O STREAMS WITH CLIENT");
 			ex.printStackTrace();
 		}
 	}
-
 
 	@Override
 	public void run(){
@@ -44,7 +44,7 @@ public class ClientHandler implements Runnable{
 				if (message.command.equals("user_disconnection")){
 					server.broadcastMessage(jsonMessage);
 
-					System.out.println(message.sender + ": disconnected from the server");
+					ServerLogger.info(message.sender + " DISCONNECTED FROM SERVER");
 					this.close();
 					break;
 				}
@@ -69,7 +69,10 @@ public class ClientHandler implements Runnable{
 			out.close();
 			client_socket.close();
 			server.removeClient(this);
+
+			ServerLogger.fine("ALL STREAMS WERE CLOSED");
 		} catch (IOException ex){
+			ServerLogger.error("UNABLE TO CLOSE I/O STREAMS WITH CLIENT");
 			ex.printStackTrace();
 		}
 	}
