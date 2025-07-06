@@ -70,7 +70,7 @@ public class ClientHandler implements Runnable{
 			client_socket.close();
 			server.removeClient(this);
 
-			ServerLogger.fine("ALL STREAMS WERE CLOSED");
+			ServerLogger.info("ALL STREAMS WERE CLOSED");
 		} catch (IOException ex){
 			ServerLogger.error("UNABLE TO CLOSE I/O STREAMS WITH CLIENT");
 			ex.printStackTrace();
