@@ -12,7 +12,7 @@ public class Client{
 	private PrintWriter out;
 	private Scanner in;
 	private String name;
-	private boolean running = true;
+	private volatile boolean running = true;
 
 	private Terminal terminal;
 	private LineReader reader;
@@ -28,6 +28,7 @@ public class Client{
 
         try {
 			clientSocket = new Socket(host, port);
+			clientSocket.setSoTimeout(1000);
 			out = new PrintWriter(clientSocket.getOutputStream());
 			in = new Scanner(clientSocket.getInputStream());
 
@@ -54,8 +55,8 @@ public class Client{
 		out.println(jsonMessage);
 		out.flush();
 
-		this.readerThread = new Thread(new MessageReader());
-		this.writerThread = new Thread(new MessageWriter());
+		readerThread = new Thread(new MessageReader());
+		writerThread = new Thread(new MessageWriter());
 
 		readerThread.start();
 		writerThread.start();
@@ -64,34 +65,28 @@ public class Client{
 	public class MessageReader implements Runnable{
 		@Override
 		public void run(){
-			while (running){
-				if (Thread.currentThread().isInterrupted()){
-					break;
-				}
+			while (!Thread.currentThread().isInterrupted() && in != null && in.hasNext()){
+				String currentBuffer = reader.getBuffer().toString();
+				String message_from_server = in.nextLine();
+				Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
 
-				if (in.hasNext()) {
-					String currentBuffer = reader.getBuffer().toString();
-					String message_from_server = in.nextLine();
-					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
+				if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")) {
+					terminal.writer().print("\033[2K");
 
-					if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")){
-						terminal.writer().print("\033[2K");
-
-						switch (deserialized_message.command){
-							case "user_message":
-								terminal.writer().println("\r" + deserialized_message.sender + ": " + deserialized_message.message);
-								break;
-							case "user_joining":
-								terminal.writer().println("\r" + deserialized_message.sender + " joined the server");
-								break;
-							case "user_disconnection":
-								terminal.writer().println("\r" + deserialized_message.sender + " disconnected from the server");
-								break;
-						}
-
-						terminal.writer().print(name + ": " + currentBuffer);
-						terminal.flush();
+					switch (deserialized_message.command) {
+						case "user_message":
+							terminal.writer().println("\r" + deserialized_message.sender + ": " + deserialized_message.message);
+							break;
+						case "user_joining":
+							terminal.writer().println("\r" + deserialized_message.sender + " joined the server");
+							break;
+						case "user_disconnection":
+							terminal.writer().println("\r" + deserialized_message.sender + " disconnected from the server");
+							break;
 					}
+
+					terminal.writer().print(name + ": " + currentBuffer);
+					terminal.flush();
 				}
 			}
 		}
@@ -114,9 +109,6 @@ public class Client{
 					out.println(jsonMessage);
 					out.flush();
 
-					readerThread.interrupt();
-
-					running = false;
 					closeStreams();
 					break;
 				}
@@ -133,7 +125,10 @@ public class Client{
 	}
 
 	public void closeStreams(){
+		running = false;
+
 		try{
+			if (readerThread != null) readerThread.interrupt();
 			if (clientSocket != null) clientSocket.close();
 			if (in != null) in.close();
 			if (out != null) out.close();

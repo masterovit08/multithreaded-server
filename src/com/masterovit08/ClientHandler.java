@@ -65,8 +65,8 @@ public class ClientHandler implements Runnable{
 
 	public void close(){
 		try{
-			in.close();
 			out.close();
+			in.close();
 			client_socket.close();
 			server.removeClient(this);
 
