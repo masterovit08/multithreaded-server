@@ -34,6 +34,10 @@ public class ClientHandler implements Runnable{
 	public void run(){
 		String newUserJsonMessage = in.nextLine();
 		server.broadcastMessage(newUserJsonMessage);
+
+		Message newUserMessage = new Gson().fromJson(newUserJsonMessage, Message.class);
+		ServerLogger.info(newUserMessage.sender + " CONNECTED TO THE SERVER");
+
 		this.active = true;
 
 		while (true){

@@ -2,6 +2,7 @@ package com.masterovit08;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import com.google.gson.Gson;
 import org.jline.reader.*;
@@ -65,29 +66,33 @@ public class Client{
 	public class MessageReader implements Runnable{
 		@Override
 		public void run(){
-			while (!Thread.currentThread().isInterrupted() && in != null && in.hasNext()){
-				String currentBuffer = reader.getBuffer().toString();
-				String message_from_server = in.nextLine();
-				Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
+			try {
+				while (!Thread.currentThread().isInterrupted() && in != null && in.hasNext()) {
+					String currentBuffer = reader.getBuffer().toString();
+					String message_from_server = in.nextLine();
+					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
 
-				if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")) {
-					terminal.writer().print("\033[2K");
+					if (!deserialized_message.sender.equals(name) || deserialized_message.command.equals("user_joining")) {
+						terminal.writer().print("\033[2K");
 
-					switch (deserialized_message.command) {
-						case "user_message":
-							terminal.writer().println("\r" + deserialized_message.sender + ": " + deserialized_message.message);
-							break;
-						case "user_joining":
-							terminal.writer().println("\r" + deserialized_message.sender + " joined the server");
-							break;
-						case "user_disconnection":
-							terminal.writer().println("\r" + deserialized_message.sender + " disconnected from the server");
-							break;
+						switch (deserialized_message.command) {
+							case "user_message":
+								terminal.writer().println("\r" + deserialized_message.sender + ": " + deserialized_message.message);
+								break;
+							case "user_joining":
+								terminal.writer().println("\r" + deserialized_message.sender + " joined the server");
+								break;
+							case "user_disconnection":
+								terminal.writer().println("\r" + deserialized_message.sender + " disconnected from the server");
+								break;
+						}
+
+						terminal.writer().print(name + ": " + currentBuffer);
+						terminal.flush();
 					}
-
-					terminal.writer().print(name + ": " + currentBuffer);
-					terminal.flush();
 				}
+			} catch (IllegalStateException | NoSuchElementException ex){
+				System.out.println("\033[1;31mDISCONNECTED FROM SERVER\033[0m");
 			}
 		}
 	}
