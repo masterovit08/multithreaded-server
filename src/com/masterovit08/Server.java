@@ -6,7 +6,8 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server{
-    private final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
+    public final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
+	public final CopyOnWriteArrayList<String> names = new CopyOnWriteArrayList<>();
 
 	public Server(int port){
 

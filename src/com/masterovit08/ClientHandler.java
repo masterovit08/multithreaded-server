@@ -14,13 +14,14 @@ public class ClientHandler implements Runnable{
 	private Scanner in;
 
 	private boolean active = false;
+	private String clientName;
 
 	public ClientHandler(Socket socket, Server server){
 		this.client_socket = socket;
 		this.server = server;
 
 		try{
-			this.out = new PrintWriter(socket.getOutputStream());
+			this.out = new PrintWriter(socket.getOutputStream(), true);
 			this.in = new Scanner(socket.getInputStream());
 		}
 
@@ -32,11 +33,35 @@ public class ClientHandler implements Runnable{
 
 	@Override
 	public void run(){
-		String newUserJsonMessage = in.nextLine();
-		server.broadcastMessage(newUserJsonMessage);
+		while (true){
+			String newUserJsonMessage = in.nextLine();
+			Message newUserMessage = new Gson().fromJson(newUserJsonMessage, Message.class);
 
-		Message newUserMessage = new Gson().fromJson(newUserJsonMessage, Message.class);
-		ServerLogger.info(newUserMessage.sender + " CONNECTED TO THE SERVER");
+			if (!server.names.contains(newUserMessage.sender)){
+				Message goodNameMessage = new Message();
+				goodNameMessage.command = "unique_name";
+				goodNameMessage.sender = "server";
+				goodNameMessage.message = "";
+
+				out.println(new  Gson().toJson(goodNameMessage));
+
+				server.names.add(newUserMessage.sender);
+				clientName = newUserMessage.sender;
+				server.broadcastMessage(newUserJsonMessage);
+				ServerLogger.info(newUserMessage.sender + " CONNECTED TO THE SERVER");
+
+				break;
+			}
+
+			else{
+				Message usedNameMessage = new Message();
+				usedNameMessage.sender = "server";
+				usedNameMessage.command = "used_name";
+				usedNameMessage.message = "";
+
+				out.println(new Gson().toJson(usedNameMessage));
+			}
+		}
 
 		this.active = true;
 
@@ -50,6 +75,7 @@ public class ClientHandler implements Runnable{
 
 					ServerLogger.info(message.sender + " DISCONNECTED FROM SERVER");
 					this.close();
+
 					break;
 				}
 
@@ -64,7 +90,6 @@ public class ClientHandler implements Runnable{
 
 	public void sendMessage(String jsonMessage){
 		out.println(jsonMessage);
-		out.flush();
 	}
 
 	public void close(){
@@ -73,6 +98,7 @@ public class ClientHandler implements Runnable{
 			in.close();
 			client_socket.close();
 			server.removeClient(this);
+			server.names.remove(clientName);
 
 			ServerLogger.info("ALL STREAMS WERE CLOSED");
 		} catch (IOException ex){

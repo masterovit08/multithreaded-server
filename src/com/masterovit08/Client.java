@@ -29,8 +29,7 @@ public class Client{
 
         try {
 			clientSocket = new Socket(host, port);
-			clientSocket.setSoTimeout(1000);
-			out = new PrintWriter(clientSocket.getOutputStream());
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new Scanner(clientSocket.getInputStream());
 
 			terminal = TerminalBuilder.builder().system(true).build();
@@ -44,17 +43,27 @@ public class Client{
 			closeStreams();
 		}
 
-		name = reader.readLine("Enter your name: ");
-		System.out.println();
+		do {
+			name = reader.readLine("Enter your name: ");
+			System.out.println();
 
-		Message register_message = new Message();
-		register_message.command = "user_joining";
-		register_message.sender = name;
-		register_message.message = "";
+			Message register_message = new Message();
+			register_message.command = "user_joining";
+			register_message.sender = name;
+			register_message.message = "";
 
-		String jsonMessage = new Gson().toJson(register_message);
-		out.println(jsonMessage);
-		out.flush();
+			String jsonMessage = new Gson().toJson(register_message);
+			out.println(jsonMessage);
+
+			jsonMessage = in.nextLine();
+			Message message = new Gson().fromJson(jsonMessage, Message.class);
+
+			if (message.command.equals("unique_name")) {
+				break;
+			}
+			else System.out.println("\033[1;31mThe name is already taken.\n\033[1;33mTry another one...\033[0m");
+
+		} while (true);
 
 		readerThread = new Thread(new MessageReader());
 		writerThread = new Thread(new MessageWriter());
@@ -67,7 +76,7 @@ public class Client{
 		@Override
 		public void run(){
 			try {
-				while (!Thread.currentThread().isInterrupted() && in != null && in.hasNext()) {
+				while (running && in.hasNext()) {
 					String currentBuffer = reader.getBuffer().toString();
 					String message_from_server = in.nextLine();
 					Message deserialized_message = new Gson().fromJson(message_from_server, Message.class);
@@ -91,8 +100,8 @@ public class Client{
 						terminal.flush();
 					}
 				}
-			} catch (IllegalStateException | NoSuchElementException ex){
-				System.out.println("\033[1;31mDISCONNECTED FROM SERVER\033[0m");
+			} catch (IllegalStateException | NoSuchElementException ignored){
+				;
 			}
 		}
 	}
@@ -112,7 +121,6 @@ public class Client{
 					String jsonMessage = new Gson().toJson(message);
 
 					out.println(jsonMessage);
-					out.flush();
 
 					closeStreams();
 					break;
@@ -124,7 +132,6 @@ public class Client{
 				String jsonMessage = new Gson().toJson(message);
 
 				out.println(jsonMessage);
-				out.flush();
 			}
 		}
 	}
@@ -133,11 +140,10 @@ public class Client{
 		running = false;
 
 		try{
-			if (readerThread != null) readerThread.interrupt();
 			if (clientSocket != null) clientSocket.close();
 			if (in != null) in.close();
 			if (out != null) out.close();
-			System.out.println("All streams are closed");
+			System.out.println("\033[1;31mDISCONNECTED FROM SERVER\033[0m");
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
